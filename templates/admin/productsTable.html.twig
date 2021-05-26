@@ -1,0 +1,213 @@
+{% extends "admin/index.html.twig" %}
+    
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | DataTables</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="{{ asset ('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')}}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ asset ('../../plugins/fontawesome-free/css/all.min.css')}}">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset ('../../dist/css/adminlte.min.css')}}">
+</head>
+<body class="hold-transition sidebar-mini">
+  
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+           
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Products table</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <div class="row">
+
+                     <div class="col-sm-12 col-md-6">
+                     <div id="example1_filter" class="dataTables_filter">
+                     <label>Search:<input type="search" class="form-control form-control-sm" placeholder="" id="s1" name="s1" onchange="update()" aria-controls="example1"></label>
+                       <a href="/products/new"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                     </div>
+
+                    </div>
+                </div>
+    
+                  <thead>
+                  <tr>
+                    <th>Product id</th>
+                    <th>name</th>
+                    <th>description</th>
+                    <th>price</th>
+                    <th>last modified</th>
+                    <th>by</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    <th>Qr</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for entity in data %}
+                    <tr>
+                    <td>{{ entity.id }}</td>
+                    <td>{{ entity.nom  }}</td>
+                    <td>{{ entity.des  }}</td>
+                    <td>{{ entity.prix  }}</td>
+                    <td>{{ entity.lastmod  }}</td>
+                    <td>{{ entity.modby  }}</td>
+                      <td><a class="btn btn-app" href="/products/edit/{{ entity.id }}"><i class="fas fa-edit"></i> Edit </a></td>
+                      <td><a class="btn btn-app" href="/products/delete/{{ entity.id }}"><i class="fas fa-trash"></i> Delete </a></td>
+                      <td><a class="btn btn-app" href="#" onclick="window.open('{{ path("qrCode" ,{x:entity.id} )}}','newWindow', 'width=350,height=350')"><i class="fas fa-qrcode"></i> Qr Code </a></td>
+                  <tr>
+
+                  {% endfor %}
+                  </tbody>
+
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{{ asset ('../../plugins/jquery/jquery.min.js')}}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset ('../../plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{{ asset ('../../plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset ('../../dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ asset ('../../dist/js/demo.js')}}"></script>
+<!-- Page specific script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+
+  function update() {
+      var element = document.getElementById("s1");
+      var text = element.value;
+      if (text == '') {
+          $.ajax({
+
+              url: '/products/all',
+              method: "GET",
+              dataType: 'json',
+              success: function (response) {
+
+                  console.log(response);
+                  var x = '';
+                  $.each(response, function (index, value) {
+                    $date = new Date(value.lastmod.date);
+                    let url = "{{ path("qrCode" ,{x:1} )}}"
+                    url = url.replace("1", value.id);
+                      x += '<tr>'
+                      x += '<td>' + value.id + '</td>'
+                      x += '<td>' + value.nom + '</td>'
+                      x += '<td>' + value.des + '</td>'
+                      x += '<td>' + value.prix + '</td>'
+                      x += '<td>' + $date.getDate()+'/'+($date.getMonth()+1)+'/'+($date.getYear()+1900)+ '</td>'
+                      x += '<td>' + 'Admin' + '</td>'
+                      x += '<td><a class="btn btn-app" href="/products/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
+                      x += '<td><a class="btn btn-app" href="/products/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
+                      x += '<td><a class="btn btn-app" href="#" onclick="window.open('+url+',newWindow,width=350 height=350)"><i class="fas fa-qrcode"></i> Qr Code </a></td>'
+                      x += '</tr>'
+                  })
+
+                  $('#example1 > tbody').html(x);
+              }
+          });
+          console.log("update all");
+      } else {
+          $.ajax({
+
+              url: '/products/search/' + text,
+              method: "GET",
+              dataType: 'json',
+              success: function (response) {
+
+                  console.log(response);
+                  var x = '';
+                  $.each(response, function (index, value) {
+                    $date = new Date(value.lastmod.date);
+                    let url = "{{ path("qrCode" ,{x:1} )}}"
+                    url = url.replace("1", value.id);
+                      x += '<tr>'
+                      x += '<td>' + value.id + '</td>'
+                      x += '<td>' + value.nom + '</td>'
+                      x += '<td>' + value.des + '</td>'
+                      x += '<td>' + value.prix + '</td>'
+                      x += '<td>' + $date.getDate()+'/'+($date.getMonth()+1)+'/'+($date.getYear()+1900)+ '</td>'
+                      x += '<td>' + 'Admin' + '</td>'
+                      x += '<td><a class="btn btn-app" href="/products/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
+                      x += '<td><a class="btn btn-app" href="/products/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
+                      x += '<td><a class="btn btn-app" href="#" onclick="window.open(\''+url+'\',\'newWindow\',\'width=350,height=350\')"><i class="fas fa-qrcode"></i> Qr Code </a></td>'
+                      x += '</tr>'
+                  })
+
+                  $('#example1 > tbody').html(x);
+              }
+          });
+      }
+  }
+</script>
+</body>
+</html>
+{% endblock %}

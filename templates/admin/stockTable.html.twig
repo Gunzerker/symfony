@@ -1,0 +1,210 @@
+{% extends "admin/index.html.twig" %}
+    
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | DataTables</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="{{ asset ('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')}}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ asset ('../../plugins/fontawesome-free/css/all.min.css')}}">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset ('../../dist/css/adminlte.min.css')}}">
+</head>
+<body class="hold-transition sidebar-mini" onload="update()">
+  
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+           
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Stock table</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <div class="row">
+
+                     <div class="col-sm-12 col-md-6">
+                     <div id="example1_filter" class="dataTables_filter">
+                     <input name="s1" id="s1" type="hidden" class="form-control form-control-sm" placeholder="" onchange="update()" aria-controls="example1">
+                       <a href="/gyms/new"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                       <br>
+                       <label>Gym:<select id="g1" name="g1" onchange="update()">
+                           <option value ="-1">All Gyms</option>
+                           {% for entity in gyms %}
+                             <option value="{{ entity.id }}"> {{ entity.nom }}</option>
+                           {% endfor %}
+                         </select>
+
+                     </label>
+                     </div>
+
+                    </div>
+                </div>
+    
+                  <thead>
+                  <tr>
+                    <th>Product id</th>
+                    <th>Product name</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>qte</th>
+                    <th>Gym</th>
+                    <th>Derniere modification</th>
+                    <th>maj</th>
+                    <th>supprimer</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+
+                </table>
+              </div>
+
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{{ asset ('../../plugins/jquery/jquery.min.js')}}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset ('../../plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{{ asset ('../../plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset ('../../dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ asset ('../../dist/js/demo.js')}}"></script>
+<!-- Page specific script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+
+
+
+  function update() {
+    var element = document.getElementById("s1");
+    var element2 = document.getElementById("g1");
+    var text = element.value;
+    var g = element2.options[element2.selectedIndex].value;
+    if (text == '') {
+      $.ajax({
+
+        url: '/stock/'+g,
+        method: "GET",
+        dataType: 'json',
+        success: function (response) {
+
+          console.log(response);
+          var x = '';
+          $.each(response, function (index, value) {
+
+            x += '<tr>'
+            x += '<td>' + value.id + '</td>'
+            x += '<td>' + value.nom + '</td>'
+            x += '<td>' + value.des + '</td>'
+            x += '<td>' + value.prix + '</td>'
+            x += '<td>' + value.qte + '</td>'
+            x += '<td>' + value.gnom + '</td>'
+            x += '<td>' + value.lastmod + '</td>'
+            x += '<td><a class="btn btn-app" href="/stock/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
+            x += '<td><a class="btn btn-app" href="/stock/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
+            x += '</tr>'
+          })
+
+          $('#example1 > tbody').html(x);
+        }
+      });
+      console.log("update all");
+    } else {
+      $.ajax({
+
+        url: '/stock/' +g+'/'+ text,
+        method: "GET",
+        dataType: 'json',
+        success: function (response) {
+
+          console.log(response);
+          var x = '';
+          $.each(response, function (index, value) {
+
+            x += '<tr>'
+            x += '<td>' + value.id + '</td>'
+            x += '<td>' + value.nom + '</td>'
+            x += '<td>' + value.des + '</td>'
+            x += '<td>' + value.prix + '</td>'
+            x += '<td>' + value.qte + '</td>'
+            x += '<td>' + value.gnom + '</td>'
+            x += '<td>' + value.lastmod + '</td>'
+            x += '<td><a class="btn btn-app" href="/stock/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
+            x += '<td><a class="btn btn-app" href="/stock/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
+            x += '</tr>'
+          })
+
+          $('#example1 > tbody').html(x);
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>
+{% endblock %}

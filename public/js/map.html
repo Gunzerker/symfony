@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Java-Buddy: Google Maps</title>
+<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<style>
+    #mapcanvas {
+        height: 600px;
+        width: 100%
+    }
+    </style>
+    </head>
+ 
+<body>
+    <div id="mapcanvas">
+ 
+        <script type="text/javascript">
+            var marker;
+            const geocoder = new google.maps.Geocoder();
+            document.map = new google.maps.Map(document
+                    .getElementById("mapcanvas"));
+            var latlng = new google.maps.LatLng(36.8257173,10.1718502);
+            var Options = {
+                zoom : 11.75,
+                center : latlng,
+                mapTypeId : google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("mapcanvas"),
+                Options);
+ 
+document.goToLocation = function(x, y) {
+    alert("goToLocation, x: " + x + ", y:" + y);
+    var latLng = new google.maps.LatLng(x, y);
+    map.setCenter(latLng);
+    // Since you have multiple markers, markers will remain as they are
+}
+document.getMarkerLat = function(){
+    return marker.position.lat();
+}
+document.getMarkerLon = function(){
+    return marker.position.lng();
+}
+
+
+document.addMarker = function(x, y) {
+    marker = new google.maps.Marker({
+       position : new google.maps.LatLng(x, y),
+       map : map,
+       draggable : true,
+       //icon: carMarkerImage,
+       title : "Gym Location",
+       autoPan : true
+    });
+ 
+    var infobulle = new google.maps.InfoWindow({
+       
+       content : "Please move the marker to the gym location"
+    });
+ 
+    google.maps.event.addListener(marker, 'mouseover', function() {
+       infobulle.open(map, marker);
+    });
+}
+
+
+document.addStaticMarker = function(x, y, t, p) {
+    marker = new google.maps.Marker({
+       position : new google.maps.LatLng(x, y),
+       map : map,
+       draggable : false,
+       //icon: carMarkerImage,
+       title : p,
+       autoPan : false
+    });
+ 
+  
+} 
+//addMarker(36.8257173, 10.1718502);
+ 
+ 
+function geocodeLatLng(x, y) {
+  const latlng = {
+    lat: x,
+    lng: y,
+  };
+  geocoder.geocode({ location: latlng }, (results, status) => {
+    if (status === "OK") {
+      if (results[0]) {
+        return results[0].formatted_address;
+      } else {
+        return "No results found" ;
+      }
+    } else {
+       return "Geocoder failed due to: " + status;
+    }
+  });
+}
+        </script>
+ 
+ 
+    </div>
+</body>
+</html>

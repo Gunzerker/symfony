@@ -1,0 +1,173 @@
+{% extends "admin/index.html.twig" %}
+    
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | DataTables</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="{{ asset ('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback')}}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{ asset ('../../plugins/fontawesome-free/css/all.min.css')}}">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+  <link rel="stylesheet" href="{{ asset ('../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset ('../../dist/css/adminlte.min.css')}}">
+</head>
+<body class="hold-transition sidebar-mini">
+  
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+
+            {% if error == 0 %}
+              <p>Product inserted successfully ! </p>
+            {% endif %}
+            {% if error == 1 %}
+              <p>Error ! please check all fields </p>
+            {% endif %}
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">New Product</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+               <form action="{{ path('productsSubmit') }}" onsubmit="return validateForm()" method="POST">
+                 <label for="nom">Name     </label>
+                 <input type="text" id="name" class="form-control is-invalid" onchange="nomOnChange()" name="nom" ><br />
+                 <label for="des">Description</label>
+                 <input type="text" id="des" class="form-control is-warning" onchange="desOnChange()" name="des" ><br />
+                 <label for="prix">Price</label>
+                 <input type="text" id="prix" class="form-control is-invalid" onchange="prixOnChange()" name="prix"><br />
+                 <br>
+                 <div class="input-group">
+                   <div class="custom-file">
+                   <input type="file" class="custom-file-input is-invalid" name="image">
+
+                 <label for="image" class="custom-file-label">Image</label>
+
+                 </div>
+              </div>
+                 <br>
+                 <button type="submit" class="btn btn-primary" name="submit">Create</button>
+               </form>
+              <script>
+                function nomOnChange(){
+                  var element = document.getElementById("name");
+                  if(element.value != ""){
+                    element.classList.remove("is-invalid");
+
+                  }else{
+                    element.classList.add("is-invalid");
+                  }
+                }
+
+                function desOnChange(){
+                  var element = document.getElementById("des");
+                  if(element.value != ""){
+                    element.classList.remove("is-warning");
+
+                  }else{
+                    element.classList.add("is-warning");
+                  }
+                }
+                function prixOnChange(){
+                  var element = document.getElementById("prix");
+                  var reg = new RegExp(/^\d+(\.\d+)?$/);
+                  if(reg.test(element.value)){
+                    element.classList.remove("is-invalid");
+
+                  }else{
+                    element.classList.add("is-invalid");
+                  }
+                }
+
+                function validateForm() {
+                  var element = document.getElementById("name");
+                  if(element.classList.contains("is-invalid")){
+                    alert("The name is invalid");
+                    return false;
+                  }
+                  var element = document.getElementById("prix");
+                  if(element.classList.contains("is-invalid")){
+                    alert("The price is invalid");
+                    return false;
+                  }
+                  return true;
+                }
+              </script>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{{ asset ('../../plugins/jquery/jquery.min.js')}}"></script>
+<!-- Bootstrap 4 -->
+<script src="{{ asset ('../../plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+<!-- DataTables  & Plugins -->
+<script src="{{ asset ('../../plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/jszip/jszip.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/pdfmake/pdfmake.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/pdfmake/vfs_fonts.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+<script src="{{ asset ('../../plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+<!-- AdminLTE App -->
+<script src="{{ asset ('../../dist/js/adminlte.min.js')}}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{{ asset ('../../dist/js/demo.js')}}"></script>
+<!-- Page specific script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+</body>
+</html>
+{% endblock %}
