@@ -27,7 +27,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-           
+            {% if error == 0 %}
+              <p>Gym inserted successfully ! </p>
+            {% endif %}
+            {% if error == 2 %}
+              <p>Error ! Cannot delete a gym when there is an already active stock </p>
+            {% endif %}
 
             <div class="card">
               <div class="card-header">
@@ -54,8 +59,6 @@
                     <th>zone</th>
                     <th>address</th>
                     <th>num</th>
-                    <th>lat</th>
-                    <th>lon</th>
                     <th>Update</th>
                     <th>Delete</th>
                   </tr>
@@ -68,8 +71,6 @@
                     <td>{{ entity.zone  }}</td>
                     <td>{{ entity.adresse  }}</td>
                     <td>{{ entity.num  }}</td>
-                    <td>{{ entity.lat  }}</td>
-                    <td>{{ entity.lon  }}</td>
                       <td><a class="btn btn-app" href="/gyms/edit/{{ entity.id }}"><i class="fas fa-edit"></i> Edit </a></td>
                       <td><a class="btn btn-app" href="/gyms/delete/{{ entity.id }}"><i class="fas fa-trash"></i> Delete </a></td>
                   <tr>
@@ -164,8 +165,6 @@
             x += '<td>' + value.zone + '</td>'
             x += '<td>' + value.adresse + '</td>'
             x += '<td>' + value.num + '</td>'
-            x += '<td>' + value.lat + '</td>'
-            x += '<td>' + value.lon + '</td>'
             x += '<td><a class="btn btn-app" href="/gyms/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
             x += '<td><a class="btn btn-app" href="/gyms/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
             x += '</tr>'
@@ -193,8 +192,6 @@
             x += '<td>' + value.zone + '</td>'
             x += '<td>' + value.adresse + '</td>'
             x += '<td>' + value.num + '</td>'
-            x += '<td>' + value.lat + '</td>'
-            x += '<td>' + value.lon + '</td>'
             x += '<td><a class="btn btn-app" href="/gyms/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
             x += '<td><a class="btn btn-app" href="/gyms/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
             x += '</tr>'

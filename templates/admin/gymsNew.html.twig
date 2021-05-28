@@ -36,7 +36,7 @@
           <div class="col-12">
 
             {% if error == 0 %}
-              <p>Product inserted successfully ! </p>
+              <p>Gym inserted successfully ! </p>
             {% endif %}
             {% if error == 1 %}
               <p>Error ! please check all fields </p>
@@ -54,13 +54,13 @@
                  <label for="zone">Zone</label>
                  <input type="text" id="zone" class="form-control is-invalid" onchange="zoneOnChange()" name="zone" ><br />
                  <label for="adr">Address</label>
-                 <input type="text" id="adr" class="form-control is-invalid" onchange="adrOnChange()" name="adresse"><br />
+                 <input type="text" id="adr" class="form-control " onchange="adrOnChange()" name="adresse"><br />
                  <label for="num">Tel</label>
                  <input type="text" id="num" class="form-control is-invalid" onchange="numOnChange()" name="num"><br />
                  <label for="lat">Latitude</label>
-                 <input type="text" id="lat" class="form-control is-invalid" onchange="latOnChange()" name="lat"><br />
+                 <input type="text" id="lat" class="form-control " onchange="latOnChange()" name="lat"><br />
                  <label for="lon">longitude</label>
-                 <input type="text" id="lon" class="form-control is-invalid" onchange="lonOnChange()" name="lon"><br />
+                 <input type="text" id="lon" class="form-control " onchange="lonOnChange()" name="lon"><br />
 
                  <br>
 
@@ -78,9 +78,13 @@
     <!-- /.content -->
     </div>
                 <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
-                <div id="mapcanvas">
+                <script src="https://cdn.jsdelivr.net/gh/bigdatacloudapi/js-reverse-geocode-client@latest/bigdatacloud_reverse_geocode.min.js" type="text/javascript"></script>
+
+    <div id="mapcanvas">
 
                   <script type="text/javascript">
+                      var reverseGeocoder=new BDCReverseGeocode();
+
                     var marker;
                     const geocoder = new google.maps.Geocoder();
                     document.map = new google.maps.Map(document
@@ -107,7 +111,6 @@
                       return marker.position.lng();
                     }
 
-
                     document.addMarker = function(x, y) {
                       marker = new google.maps.Marker({
                         position : new google.maps.LatLng(x, y),
@@ -129,6 +132,19 @@
                         google.maps.event.addListener(marker, 'mouseup', function() {
                            document.getElementById("lon").value = document.getMarkerLon();
                            document.getElementById("lat").value = document.getMarkerLat();
+                            let reverse_url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${document.getMarkerLat()}%2C${document.getMarkerLon()}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=9fzyjPzyA1lSVWemOGETD0xpBrh1SLvMdh8z6LQp_cU`
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', reverse_url, true);
+
+                            xhr.onload = function () {
+                                // Requête finie, traitement ici.
+                                const parsed_response = JSON.parse(this.response);
+                                console.log(parsed_response.Response.View[0].Result[0].Location.Address.Label)
+                                document.getElementById("adr").value = parsed_response.Response.View[0].Result[0].Location.Address.Label
+                            };
+
+                            xhr.send();
+                           geocodeLatLng(document.getMarkerLon(),document.getMarkerLat());
                         });
                     }
 
@@ -154,7 +170,9 @@
                         lng: y,
                       };
                       geocoder.geocode({ location: latlng }, (results, status) => {
+                          console.log(status)
                         if (status === "OK") {
+                            console.log(results[0])
                           if (results[0]) {
                             return results[0].formatted_address;
                           } else {
@@ -211,22 +229,15 @@
                 function latOnChange(){
                   var element = document.getElementById("lat");
                   var reg = new RegExp(/^\d+(\.\d+)?$/);
-                  if(reg.test(element.value)){
                     element.classList.remove("is-invalid");
 
-                  }else{
-                    element.classList.add("is-invalid");
-                  }
                 }
                 function lonOnChange(){
                   var element = document.getElementById("lon");
                   var reg = new RegExp(/^\d+(\.\d+)?$/);
-                  if(reg.test(element.value)){
+
                     element.classList.remove("is-invalid");
 
-                  }else{
-                    element.classList.add("is-invalid");
-                  }
                 }
 
                 function validateForm() {

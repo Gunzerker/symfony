@@ -20,62 +20,77 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset ('../../dist/css/adminlte.min.css')}}">
 </head>
-<body class="hold-transition sidebar-mini" onload="update()">
+<body class="hold-transition sidebar-mini">
   
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-           
+
+
 
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Stock table</h3>
-              </div>
+                <h3 class="card-title">Update stock</h3>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                    <div class="row">
+               <form action="{{ path('stocksSubmit') }}" method="POST">
+                 <table border="0">
+                 <input type="hidden" name="id" value="{{ entity[0].sid }}">
+                   <tr>
+                 <td><label for="nom">Product name</label></td>
+                 <td><input type="text" name="nom" value="{{ entity[0].nom }}" disabled><br /></td>
+                   </tr>
+                   <tr>
+                     <td><label for="nom"> </label></td>
+                     <td>
+                       <select name="product selector" id="selected_product">
 
-                     <div class="col-sm-12 col-md-6">
-                     <div id="example1_filter" class="dataTables_filter">
-                     <input name="s1" id="s1" type="hidden" class="form-control form-control-sm" placeholder="" onchange="update()" aria-controls="example1">
-                       <a href="/stocks/new"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                       <br>
-                       <label>Gym:<select id="g1" name="g1" onchange="update()">
-                           <option value ="-1">All Gyms</option>
-                           {% for entity in gyms %}
-                             <option value="{{ entity.id }}"> {{ entity.nom }}</option>
-                           {% endfor %}
-                         </select>
+                         {% for produit in product %}
+                           <option value="{{ produit.id }}">{{ produit.nom }}</option>
+                         {% endfor %}
 
-                     </label>
-                     </div>
+                       </select>
 
-                    </div>
-                </div>
-    
-                  <thead>
-                  <tr>
-                    <th>Stock id</th>
-                    <th>Product id</th>
-                    <th>Product name</th>
-                    <th>Description</th>
-                    <th>Prix</th>
-                    <th>qte</th>
-                    <th>Gym</th>
-                    <th>maj</th>
-                    <th>supprimer</th>
-                  </tr>
-                  </thead>
-                  <tbody>
+                     </td>
+                   </tr>
+                   <tr>
+                 <td><label for="des">Description</label></td>
+                 <td><input type="text" name="des" value="{{ entity[0].des }}"><br /></td>
+                   </tr>
+                   <tr>
+                <td> <label for="prix">Price</label></td>
+                 <td><input type="text" name="prix" value="{{ entity[0].prix }}"><br /></td>
+                   </tr>
+                   <tr>
+                     <td> <label for="gym">Gym</label></td>
+                     <td><input type="text" name="gym" value="{{ entity[0].gnom }}" disabled><br /></td>
+                   </tr>
+                   <tr>
+                     <td><label for="nom"> </label></td>
+                     <td>
+                       <select name="gym selector" id="selected_gym">
 
-                  </tbody>
+                         {% for gym in gyms %}
+                           <option value="{{ gym.id }}">{{ gym.nom }}</option>
+                         {% endfor %}
 
-                </table>
+                       </select>
+
+                     </td>
+                   </tr>
+                   <tr>
+                     <td><label for="quantity">Quantity</label></td>
+                     <td><input type="text" name="quantity" value="{{ entity[0].qte }}"><br /></td>
+                   </tr>
+                   <tr>
+                 <td><button type="submit" name="submit">Edit</button></td>
+                   </tr>
+                 </table>
+               </form>
+
               </div>
-
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
@@ -137,74 +152,6 @@
       "responsive": true,
     });
   });
-
-
-
-  function update() {
-    var element = document.getElementById("s1");
-    var element2 = document.getElementById("g1");
-    var text = element.value;
-    var g = element2.options[element2.selectedIndex].value;
-    if (text == '') {
-      $.ajax({
-
-        url: '/stock/'+g,
-        method: "GET",
-        dataType: 'json',
-        success: function (response) {
-
-          var x = '';
-          $.each(response, function (index, value) {
-            console.log(value)
-            console.log(response);
-
-            x += '<tr>'
-            x += '<td>' + value.sid +'</td>'
-            x += '<td>' + value.id + '</td>'
-            x += '<td>' + value.nom + '</td>'
-            x += '<td>' + value.des + '</td>'
-            x += '<td>' + value.prix + '</td>'
-            x += '<td>' + value.qte + '</td>'
-            x += '<td>' + value.gnom + '</td>'
-            x += '<td><a class="btn btn-app" href="/stocks/edit/' + value.sid + '"><i class="fas fa-edit"></i> Edit </a></td>'
-            x += '<td><a class="btn btn-app" href="/stock/delete/' + value.sid + '"><i class="fas fa-trash"></i> Delete </a></td>'
-            x += '</tr>'
-          })
-
-          $('#example1 > tbody').html(x);
-        }
-      });
-      console.log("update all");
-    } else {
-      $.ajax({
-
-        url: '/stock/' +g+'/'+ text,
-        method: "GET",
-        dataType: 'json',
-        success: function (response) {
-
-          console.log(response);
-          var x = '';
-          $.each(response, function (index, value) {
-
-            x += '<tr>'
-            x += '<td>' + value.sid +'</td>'
-            x += '<td>' + value.id + '</td>'
-            x += '<td>' + value.nom + '</td>'
-            x += '<td>' + value.des + '</td>'
-            x += '<td>' + value.prix + '</td>'
-            x += '<td>' + value.qte + '</td>'
-            x += '<td>' + value.gnom + '</td>'
-            x += '<td><a class="btn btn-app" href="/stock/edit/' + value.sid + '"><i class="fas fa-edit"></i> Edit </a></td>'
-            x += '<td><a class="btn btn-app" href="/stock/delete/' + value.sid + '"><i class="fas fa-trash"></i> Delete </a></td>'
-            x += '</tr>'
-          })
-
-          $('#example1 > tbody').html(x);
-        }
-      });
-    }
-  }
 </script>
 </body>
 </html>

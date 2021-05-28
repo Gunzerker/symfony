@@ -27,7 +27,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-           
+            {% if error == 0 %}
+              <p>Product inserted successfully ! </p>
+            {% endif %}
+            {% if error == 2 %}
+              <p>Error ! you cannot delete a product related to an existant stock ! </p>
+            {% endif %}
 
             <div class="card">
               <div class="card-header">
@@ -53,8 +58,6 @@
                     <th>name</th>
                     <th>description</th>
                     <th>price</th>
-                    <th>last modified</th>
-                    <th>by</th>
                     <th>Edit</th>
                     <th>Delete</th>
                     <th>Qr</th>
@@ -67,8 +70,7 @@
                     <td>{{ entity.nom  }}</td>
                     <td>{{ entity.des  }}</td>
                     <td>{{ entity.prix  }}</td>
-                    <td>{{ entity.lastmod  }}</td>
-                    <td>{{ entity.modby  }}</td>
+
                       <td><a class="btn btn-app" href="/products/edit/{{ entity.id }}"><i class="fas fa-edit"></i> Edit </a></td>
                       <td><a class="btn btn-app" href="/products/delete/{{ entity.id }}"><i class="fas fa-trash"></i> Delete </a></td>
                       <td><a class="btn btn-app" href="#" onclick="window.open('{{ path("qrCode" ,{x:entity.id} )}}','newWindow', 'width=350,height=350')"><i class="fas fa-qrcode"></i> Qr Code </a></td>
@@ -163,8 +165,6 @@
                       x += '<td>' + value.nom + '</td>'
                       x += '<td>' + value.des + '</td>'
                       x += '<td>' + value.prix + '</td>'
-                      x += '<td>' + $date.getDate()+'/'+($date.getMonth()+1)+'/'+($date.getYear()+1900)+ '</td>'
-                      x += '<td>' + 'Admin' + '</td>'
                       x += '<td><a class="btn btn-app" href="/products/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
                       x += '<td><a class="btn btn-app" href="/products/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
                       x += '<td><a class="btn btn-app" href="#" onclick="window.open('+url+',newWindow,width=350 height=350)"><i class="fas fa-qrcode"></i> Qr Code </a></td>'
@@ -194,8 +194,6 @@
                       x += '<td>' + value.nom + '</td>'
                       x += '<td>' + value.des + '</td>'
                       x += '<td>' + value.prix + '</td>'
-                      x += '<td>' + $date.getDate()+'/'+($date.getMonth()+1)+'/'+($date.getYear()+1900)+ '</td>'
-                      x += '<td>' + 'Admin' + '</td>'
                       x += '<td><a class="btn btn-app" href="/products/edit/' + value.id + '"><i class="fas fa-edit"></i> Edit </a></td>'
                       x += '<td><a class="btn btn-app" href="/products/delete/' + value.id + '"><i class="fas fa-trash"></i> Delete </a></td>'
                       x += '<td><a class="btn btn-app" href="#" onclick="window.open(\''+url+'\',\'newWindow\',\'width=350,height=350\')"><i class="fas fa-qrcode"></i> Qr Code </a></td>'

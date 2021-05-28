@@ -33,6 +33,7 @@ class GymController extends AbstractController
         return $this->render('admin/gymTable.html.twig', [
             'controller_name' => 'AdminController',
             'data'=>$product,
+            'error'=>-1
         ]);
     }
 
@@ -175,11 +176,28 @@ class GymController extends AbstractController
      */
     public function productsDelete(int $id): Response
     {
+        try{
         $entityManager = $this->getDoctrine()->getManager();
         $product = $this->getDoctrine()
             ->getRepository(Gym::class)->find($id);
         $entityManager->remove($product);
         $entityManager->flush();
-        return $this->redirectToRoute('gymsTable', []);
+        //return $this->redirectToRoute('gymsTable', []);
+            $product = $this->getDoctrine()
+                ->getRepository(Gym::class)->findAll();
+            return $this->render('admin/gymTable.html.twig', [
+                'controller_name' => 'AdminController',
+                'data'=>$product,
+                'error'=>"-1"
+            ]);
+        }catch (\Exception $e){
+            $product = $this->getDoctrine()
+                ->getRepository(Gym::class)->findAll();
+            return $this->render('admin/gymTable.html.twig', [
+                'controller_name' => 'AdminController',
+                'data'=>$product,
+                'error'=>"2"
+            ]);
+        }
     }
 }

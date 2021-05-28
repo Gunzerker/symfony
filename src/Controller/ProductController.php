@@ -32,6 +32,7 @@ class ProductController extends AbstractController
         return $this->render('admin/productsTable.html.twig', [
             'controller_name' => 'AdminController',
             'data'=>$product,
+            'error'=>"-1"
         ]);
     }
 
@@ -108,7 +109,6 @@ class ProductController extends AbstractController
         $nom = $request->get('nom');
         $des = $request->get('des');
         $prix = $request->get('prix');
-        $img = $request->get('image');
         if($nom=="" or $prix <= 0)
             return $this->render('admin/productsNew.html.twig', [
                 'controller_name' => 'AdminController',
@@ -127,12 +127,12 @@ class ProductController extends AbstractController
             $p->setPrix($prix);
             //$p->setImage($img);
             $p->setModby(1);
-            $p->setLastmod(\DateTime::createFromFormat('d/m/Y', date("d/m/Y")));
+            $p->setLastmod(date("Y/m/d"));
 
 
 
             /** @var UploadedFile $uploadedFile */
-            $uploadedFile = $img->getData();
+            /*$uploadedFile = date("Y-m-d");
             if ($uploadedFile){
                 $destination = $this->getParameter('kernel.project_dir').'/public/uploads';
                 $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -142,9 +142,7 @@ class ProductController extends AbstractController
                     $newFilename
                 );
                 $p->setImage($newFilename);
-            }else{
-
-            }
+            }*/
 
             $entityManager->persist($p);
             $entityManager->flush();
@@ -179,7 +177,7 @@ class ProductController extends AbstractController
         $product->setNom($request->get('nom'));
         $product->setDes($request->get('des'));
         $product->setPrix($request->get('prix'));
-        $product->setImage($request->get('image'));
+        $product->setImage("none");
 
         $entityManager->flush();
 
@@ -208,12 +206,23 @@ class ProductController extends AbstractController
      * @Route("/products/delete/{id}", name="productsDelete")
      */
     public function productsDelete(int $id): Response
-    {
+    {   try{
         $entityManager = $this->getDoctrine()->getManager();
         $product = $this->getDoctrine()
             ->getRepository(Produit::class)->find($id);
         $entityManager->remove($product);
         $entityManager->flush();
         return $this->redirectToRoute('productsTable', []);
+    }catch (\Exception $e){
+        $product = $this->getDoctrine()
+            ->getRepository(Produit::class)->findAll();
+        return $this->render('admin/productsTable.html.twig', [
+            'controller_name' => 'AdminController',
+            'data'=>$product,
+            'error'=>"2"
+        ]);
+        //return $this->redirectToRoute('productsTable', ['error' => '2']);
+
+    }
     }
 }
