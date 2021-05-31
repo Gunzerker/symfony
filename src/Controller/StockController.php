@@ -200,8 +200,14 @@ class StockController extends AbstractController
      */
     public function stocksNew(): Response
     {
+        $product = $this->getDoctrine()
+            ->getRepository(Produit::class)->findAll();
+        $gym = $this->getDoctrine()
+            ->getRepository(Gym::class)->findAll();
         return $this->render('admin/stockNew.html.twig', [
             'controller_name' => 'AdminController',
+            'product'=>$product,
+            'gyms'=>$gym,
             'error' => '-1',
         ]);
     }
@@ -248,13 +254,12 @@ class StockController extends AbstractController
     }
 
     /**
-     * @Route("/stocks/submit", name="stocksSubmit")
+     * @Route("/stocks/create", name="stocksCreate")
      * @param $request
      */
-    public function stocksSubmit(Request $request): Response
+    public function stocksCreate(Request $request): Response
     {
         $id_gym_id = $request->get("gym_selector")+0;
-        $id = $request->get('id');
         $id_produit_id = $request->get('product_selector')+0;
         $qte = $request->get('quantity')+0;
 
@@ -263,7 +268,7 @@ class StockController extends AbstractController
 
 
         // Write your raw SQL
-        $rawQuery1 = 'update stock set id_gym_id = :id_gym , id_produit_id = :id_produit , qte = :qte where id = :id;';
+        $rawQuery1 = 'insert into stock (id_gym_id , id_produit_id , qte) values(:id_gym , :id_produit , :qte);';
 
 
         // Prepare the query from DATABASE1
@@ -272,7 +277,6 @@ class StockController extends AbstractController
         $statementDB1->bindValue(':id_gym', $id_gym_id);
         $statementDB1->bindValue(':id_produit', $id_produit_id);
         $statementDB1->bindValue(':qte', $qte);
-        $statementDB1->bindValue(':id', $id);
 
 
 
@@ -304,6 +308,33 @@ class StockController extends AbstractController
 
 
     }
+
+
+    /**
+     * @Route("/stocks/delete/{id}", name="stocksDelete")
+     */
+    public function stocksDelete(int $id): Response
+    {   try{
+        $entityManager = $this->getDoctrine()->getManager();
+        $product = $this->getDoctrine()
+            ->getRepository(Stock::class)->find($id);
+        $entityManager->remove($product);
+        $entityManager->flush();
+        return $this->redirectToRoute('stockTable', []);
+    }catch (\Exception $e){
+        $product = $this->getDoctrine()
+            ->getRepository(Stock::class)->findAll();
+        return $this->render('admin/stockTable.html.twig', [
+            'controller_name' => 'AdminController',
+            'data'=>$product,
+            'error'=>"2"
+        ]);
+        //return $this->redirectToRoute('productsTable', ['error' => '2']);
+
+    }
+    }
+
+
 
 
 }
