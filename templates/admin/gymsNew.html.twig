@@ -132,7 +132,7 @@
                         google.maps.event.addListener(marker, 'mouseup', function() {
                            document.getElementById("lon").value = document.getMarkerLon();
                            document.getElementById("lat").value = document.getMarkerLat();
-                            let reverse_url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${document.getMarkerLat()}%2C${document.getMarkerLon()}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=9fzyjPzyA1lSVWemOGETD0xpBrh1SLvMdh8z6LQp_cU`
+                            let reverse_url = `https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json?prox=${document.getMarkerLat()}%2C${document.getMarkerLon()}&mode=retrieveAddresses&maxresults=1&gen=9&apiKey=GaknFtZh9Uib6NJRMq1WJhl3qJkuNaH-xoS_eV9Y10Y`
                             var xhr = new XMLHttpRequest();
                             xhr.open('GET', reverse_url, true);
 

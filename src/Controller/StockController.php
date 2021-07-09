@@ -62,7 +62,6 @@ class StockController extends AbstractController
      */
     public function stockSearch(int $g,string $s): Response
     {
-        var_dump($g);
         if($g != -1){
 
         // Get connections
@@ -123,6 +122,41 @@ class StockController extends AbstractController
             return $response;
 
         }
+    }
+
+    /**
+     * @Route("/stock/submitEdit", name="stockSubmitEdit")
+     * @param $request
+     */
+    public function stockSubmitEdit(Request $request): Response
+    {
+
+
+        // Get connections
+        $DatabaseEm1 = $this->getDoctrine()->getManager();
+
+
+        // Write your raw SQL
+        $rawQuery1 = 'update stock set id_gym_id = :idgym , id_produit_id = :idproduit , qte = :qte where id=:id;';
+
+
+        // Prepare the query from DATABASE1
+        $statementDB1 = $DatabaseEm1->getConnection()->prepare($rawQuery1);
+        $statementDB1->bindValue('idproduit', $request->get('product_selector'));
+        $statementDB1->bindValue('idgym', $request->get('gym_selector'));
+        $statementDB1->bindValue('qte', $request->get('quantity'));
+        $statementDB1->bindValue('id', $request->get('id'));
+
+
+
+
+        // Execute both queries
+        $statementDB1->execute();
+
+        return $this->redirectToRoute('stockTable', [
+
+        ]);
+
     }
     /**
      * @Route("/stock/{g}", name="stockSearch2")

@@ -35,7 +35,7 @@
                 <h3 class="card-title">Update stock</h3>
               <!-- /.card-header -->
               <div class="card-body">
-               <form action="{{ path('stocksSubmit') }}" method="POST">
+               <form action="{{ path('stockSubmitEdit') }}#" method="POST">
                  <table border="0">
                  <input type="hidden" name="id" value="{{ entity[0].sid }}">
                    <tr>

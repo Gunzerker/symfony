@@ -144,8 +144,6 @@ class GymController extends AbstractController
         $product->setzone($request->get('zone'));
         $product->setAdresse($request->get('adresse'));
         $product->setNum($request->get('num'));
-        $product->setLat($request->get('lat'));
-        $product->setLon($request->get('lon'));
 
         $entityManager->flush();
 
